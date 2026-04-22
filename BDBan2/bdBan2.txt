@@ -1,0 +1,185 @@
+-- ============================================================
+--  Modelo Físico — Gerenciamento de Músicas e Playlists
+--  Banco de dados: PostgreSQL
+--  Gerado com base no modelo conceitual/lógico da imagem
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- Limpeza (caso vá recriar o schema)
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS PlaylistMusicas CASCADE;
+DROP TABLE IF EXISTS Reproducoes   CASCADE;
+DROP TABLE IF EXISTS Playlists     CASCADE;
+DROP TABLE IF EXISTS Musicas       CASCADE;
+DROP TABLE IF EXISTS Albuns        CASCADE;
+DROP TABLE IF EXISTS Artistas      CASCADE;
+DROP TABLE IF EXISTS Usuarios      CASCADE;
+
+
+-- ------------------------------------------------------------
+-- 1. ARTISTAS
+--    Cardinalidade com Álbuns : (1,1) — (0,n)
+--    Um artista pode ter zero ou vários álbuns.
+--    Um álbum pertence a exatamente um artista.
+-- ------------------------------------------------------------
+CREATE TABLE Artistas (
+    idArtista SERIAL        PRIMARY KEY,
+    nome      VARCHAR(150)  NOT NULL,
+    pais      VARCHAR(100),
+    bio       VARCHAR(1000)
+);
+
+
+-- ------------------------------------------------------------
+-- 2. USUARIOS
+--    Cardinalidade com Playlists : (1,1) — (0,n)
+--    Um usuário pode ter zero ou várias playlists.
+--    Uma playlist pertence a exatamente um usuário.
+-- ------------------------------------------------------------
+CREATE TABLE Usuarios (
+    idUsuario   SERIAL       PRIMARY KEY,
+    nome        VARCHAR(150) NOT NULL,
+    email       VARCHAR(255) NOT NULL UNIQUE,
+    senhaHash   VARCHAR(255) NOT NULL
+);
+
+
+-- ------------------------------------------------------------
+-- 3. ALBUNS
+--    FK → Artistas  (cardinalidade: Artistas (1,1) — Albuns (0,n))
+--    Um álbum pertence a exatamente um artista.
+-- ------------------------------------------------------------
+CREATE TABLE Albuns (
+    idAlbum        SERIAL       PRIMARY KEY,
+    titulo         VARCHAR(200) NOT NULL,
+    dtLancamento   DATE,
+    idArtista      INTEGER      NOT NULL,
+
+    CONSTRAINT fk_album_artista
+        FOREIGN KEY (idArtista)
+        REFERENCES Artistas (idArtista)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+
+-- ------------------------------------------------------------
+-- 4. MUSICAS
+--    FK → Albuns   (cardinalidade: Albuns (1,1) — Musicas (0,n))
+--    FK → Artistas (cardinalidade: Artistas (1,1) — Musicas (0,n))
+--    Uma música pertence a exatamente um álbum e a um artista.
+-- ------------------------------------------------------------
+CREATE TABLE Musicas (
+    idMusica     SERIAL       PRIMARY KEY,
+    titulo       VARCHAR(200) NOT NULL,
+    duracaoSeg   INTEGER      CHECK (duracaoSeg > 0),
+    genero       VARCHAR(100),
+    idAlbum      INTEGER      NOT NULL,
+    idArtista    INTEGER      NOT NULL,
+
+    CONSTRAINT fk_musica_album
+        FOREIGN KEY (idAlbum)
+        REFERENCES Albuns (idAlbum)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_musica_artista
+        FOREIGN KEY (idArtista)
+        REFERENCES Artistas (idArtista)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+
+-- ------------------------------------------------------------
+-- 5. PLAYLISTS
+--    FK → Usuarios  (cardinalidade: Usuarios (1,1) — Playlists (0,n))
+--    Uma playlist pertence a exatamente um usuário.
+-- ------------------------------------------------------------
+CREATE TABLE Playlists (
+    idPlaylist  SERIAL        PRIMARY KEY,
+    nome        VARCHAR(200)  NOT NULL,
+    descricao   VARCHAR(500),
+    publica     BOOLEAN       NOT NULL DEFAULT FALSE,
+    dtCriacao   DATE          NOT NULL DEFAULT CURRENT_DATE,
+    idUsuario   INTEGER       NOT NULL,
+
+    CONSTRAINT fk_playlist_usuario
+        FOREIGN KEY (idUsuario)
+        REFERENCES Usuarios (idUsuario)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+-- ------------------------------------------------------------
+-- 6. PLAYLISTMUSICAS  (tabela associativa N:N)
+--    Cardinalidade:
+--      Playlists (1,1) — PlaylistMusicas (0,n)
+--      Musicas   (1,1) — PlaylistMusicas (0,n)
+--    Resolve o relacionamento muitos-para-muitos entre
+--    Playlists e Músicas, guardando posição e data de adição.
+-- ------------------------------------------------------------
+CREATE TABLE PlaylistMusicas (
+    idPlaylist      INTEGER  NOT NULL,
+    idMusica        INTEGER  NOT NULL,
+    posicao         INTEGER  NOT NULL DEFAULT 0,
+    adicionadoEm    DATE     NOT NULL DEFAULT CURRENT_DATE,
+
+    CONSTRAINT pk_playlist_musica
+        PRIMARY KEY (idPlaylist, idMusica),
+
+    CONSTRAINT fk_pm_playlist
+        FOREIGN KEY (idPlaylist)
+        REFERENCES Playlists (idPlaylist)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_pm_musica
+        FOREIGN KEY (idMusica)
+        REFERENCES Musicas (idMusica)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+-- ------------------------------------------------------------
+-- 7. REPRODUCOES  (histórico de reprodução)
+--    Cardinalidade:
+--      Usuarios (1,1) — Reproducoes (0,n)
+--      Musicas  (1,1) — Reproducoes (0,n)
+--    Registra cada vez que um usuário ouviu uma música.
+--    (Tabela inferida do modelo — boa prática analítica)
+-- ------------------------------------------------------------
+CREATE TABLE Reproducoes (
+    idReproducao      SERIAL    PRIMARY KEY,
+    idUsuario         INTEGER   NOT NULL,
+    idMusica          INTEGER   NOT NULL,
+    tocadoEm          TIMESTAMP NOT NULL DEFAULT NOW(),
+    duracaoOuvidaSeg  INTEGER   CHECK (duracaoOuvidaSeg >= 0),
+
+    CONSTRAINT fk_rep_usuario
+        FOREIGN KEY (idUsuario)
+        REFERENCES Usuarios (idUsuario)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_rep_musica
+        FOREIGN KEY (idMusica)
+        REFERENCES Musicas (idMusica)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+-- ============================================================
+--  ÍNDICES — melhoram performance nas consultas mais comuns
+-- ============================================================
+CREATE INDEX idx_musicas_album    ON Musicas        (idAlbum);
+CREATE INDEX idx_musicas_artista  ON Musicas        (idArtista);
+CREATE INDEX idx_albuns_artista   ON Albuns         (idArtista);
+CREATE INDEX idx_playlists_user   ON Playlists      (idUsuario);
+CREATE INDEX idx_pm_musica        ON PlaylistMusicas(idMusica);
+CREATE INDEX idx_rep_usuario      ON Reproducoes    (idUsuario);
+CREATE INDEX idx_rep_musica       ON Reproducoes    (idMusica);
+CREATE INDEX idx_rep_data         ON Reproducoes    (tocadoEm);
