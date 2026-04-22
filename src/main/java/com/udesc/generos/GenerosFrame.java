@@ -1,4 +1,4 @@
-package com.udesc.artistas;
+package com.udesc.generos;
 
 import com.udesc.gerenciador.Database;
 import java.sql.Connection;
@@ -7,19 +7,15 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class ArtistasFrame extends javax.swing.JFrame {
+public class GenerosFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form ArtistasFrame
+     * Creates new form GenerosFrame
      */
-    public ArtistasFrame() throws SQLException {
+    public GenerosFrame() {
         initComponents();
         loadData();
     }
@@ -27,28 +23,26 @@ public class ArtistasFrame extends javax.swing.JFrame {
     private Connection getConnection() throws SQLException {
         return new Database().getConnection();
     }
-    
-    public void loadTableData(List<ArtistasBean> list){
+
+    public void loadTableData(List<GenerosBean> list) {
         DefaultTableModel dtm = (DefaultTableModel) jTable1.getModel();
         dtm.setRowCount(0);
-        
-        for (ArtistasBean bean : list){
+        for (GenerosBean bean : list) {
             Vector v = new Vector();
-            v.add(bean.getId());
+            v.add(bean.getIdGenero());
             v.add(bean.getNome());
-            v.add(bean.getGenero());
-            
             dtm.addRow(v);
         }
     }
-    
+
     public void loadData() {
         try {
-            loadTableData(ArtistasModel.listAll(getConnection()));
+            loadTableData(GenerosModel.listAll(getConnection()));
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar dados: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,7 +51,6 @@ public class ArtistasFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -66,54 +59,23 @@ public class ArtistasFrame extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "id", "Nome do Artista", "Gênero Musical"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, true, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
+        jTable1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{"id", "Nome do Gênero"}) {
+            public boolean isCellEditable(int r, int c) { return false; }
         });
-        jTable1.setColumnSelectionAllowed(true);
+        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
-        jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue("id");
-            jTable1.getColumnModel().getColumn(1).setHeaderValue("Nome do Artista");
-            jTable1.getColumnModel().getColumn(2).setHeaderValue("Gênero Musical");
-        }
 
         jButton1.setText("Editar");
-
+        jButton1.addActionListener(e -> editarActionPerformed());
         jButton2.setText("Remover");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
+        jButton2.addActionListener(e -> removerActionPerformed());
         jButton3.setText("Adicionar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
+        jButton3.addActionListener(e -> adicionarActionPerformed());
 
-        jLabel1.setFont(new java.awt.Font("Roboto Slab", 1, 48)); // NOI18N
-        jLabel1.setText("Artistas");
+        jLabel1.setFont(new java.awt.Font("Roboto Slab", 1, 48));
+        jLabel1.setText("Gêneros");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -149,16 +111,12 @@ public class ArtistasFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+        layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 85, Short.MAX_VALUE))
-        );
+                .addGap(0, 85, Short.MAX_VALUE)));
 
         pack();
         setLocationRelativeTo(null);
@@ -166,22 +124,16 @@ public class ArtistasFrame extends javax.swing.JFrame {
 
     private void adicionarActionPerformed() {
         JTextField nomeField = new JTextField(20);
-        JTextField generoField = new JTextField(20);
         JPanel panel = new JPanel(new java.awt.GridLayout(0, 2, 5, 5));
-        panel.add(new JLabel("Nome do Artista:")); panel.add(nomeField);
-        panel.add(new JLabel("ID do Gênero:"));    panel.add(generoField);
+        panel.add(new JLabel("Nome do Gênero:")); panel.add(nomeField);
 
-        if (JOptionPane.showConfirmDialog(this, panel, "Adicionar Artista",
+        if (JOptionPane.showConfirmDialog(this, panel, "Adicionar Gênero",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            String nome = nomeField.getText().trim();
+            if (nome.isEmpty()) { JOptionPane.showMessageDialog(this, "Preencha o nome.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
             try {
-                if (nomeField.getText().trim().isEmpty() || generoField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Preencha todos os campos.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
-                }
-                ArtistasModel.create(new ArtistasBean(0, nomeField.getText().trim(),
-                        Integer.parseInt(generoField.getText().trim())), getConnection());
+                GenerosModel.create(new GenerosBean(0, nome), getConnection());
                 loadData();
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "ID do Gênero deve ser um número.", "Erro", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao adicionar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -190,26 +142,20 @@ public class ArtistasFrame extends javax.swing.JFrame {
 
     private void editarActionPerformed() {
         int row = jTable1.getSelectedRow();
-        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um artista para editar.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
+        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um gênero para editar.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
         DefaultTableModel dtm = (DefaultTableModel) jTable1.getModel();
         int id = (int) dtm.getValueAt(row, 0);
         JTextField nomeField = new JTextField((String) dtm.getValueAt(row, 1), 20);
-        JTextField generoField = new JTextField(String.valueOf(dtm.getValueAt(row, 2)), 20);
         JPanel panel = new JPanel(new java.awt.GridLayout(0, 2, 5, 5));
-        panel.add(new JLabel("Nome do Artista:")); panel.add(nomeField);
-        panel.add(new JLabel("ID do Gênero:"));    panel.add(generoField);
+        panel.add(new JLabel("Nome do Gênero:")); panel.add(nomeField);
 
-        if (JOptionPane.showConfirmDialog(this, panel, "Editar Artista (ID: " + id + ")",
+        if (JOptionPane.showConfirmDialog(this, panel, "Editar Gênero (ID: " + id + ")",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            String nome = nomeField.getText().trim();
+            if (nome.isEmpty()) { JOptionPane.showMessageDialog(this, "Preencha o nome.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
             try {
-                if (nomeField.getText().trim().isEmpty() || generoField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Preencha todos os campos.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
-                }
-                ArtistasModel.alterar(new ArtistasBean(id, nomeField.getText().trim(),
-                        Integer.parseInt(generoField.getText().trim())), getConnection());
+                GenerosModel.alterar(new GenerosBean(id, nome), getConnection());
                 loadData();
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "ID do Gênero deve ser um número.", "Erro", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao editar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -218,30 +164,21 @@ public class ArtistasFrame extends javax.swing.JFrame {
 
     private void removerActionPerformed() {
         int row = jTable1.getSelectedRow();
-        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um artista para remover.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
+        if (row < 0) { JOptionPane.showMessageDialog(this, "Selecione um gênero para remover.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
         DefaultTableModel dtm = (DefaultTableModel) jTable1.getModel();
         int id = (int) dtm.getValueAt(row, 0);
         String nome = (String) dtm.getValueAt(row, 1);
 
-        if (JOptionPane.showConfirmDialog(this, "Deseja remover o artista \"" + nome + "\" (ID: " + id + ")?",
+        if (JOptionPane.showConfirmDialog(this, "Deseja remover o gênero \"" + nome + "\" (ID: " + id + ")?",
                 "Confirmar Remoção", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
             try {
-                ArtistasModel.remove(id, getConnection());
+                GenerosModel.remove(id, getConnection());
                 loadData();
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao remover: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
-
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,24 +197,20 @@ public class ArtistasFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ArtistasFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GenerosFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ArtistasFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GenerosFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ArtistasFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GenerosFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ArtistasFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GenerosFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new ArtistasFrame().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArtistasFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                new GenerosFrame().setVisible(true);
             }
         });
     }

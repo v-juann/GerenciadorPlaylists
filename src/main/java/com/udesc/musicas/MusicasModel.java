@@ -7,14 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author vinij
- */
-public class MusicasModel {
-    static void create(MusicasBean m, Connection con) throws SQLException {
 
-        PreparedStatement ps = con.prepareStatement("INSERT INTO musicas (titulo, duracao, ano, id_genero, artista) VALUES (?, ?, ?, ?, ?)");
+public class MusicasModel {
+    public static void create(MusicasBean m, Connection con) throws SQLException {
+        PreparedStatement ps = con.prepareStatement(
+            "INSERT INTO musicas (titulo, duracao, ano, id_genero, artista) VALUES (?,?,?,?,?)");
         ps.setString(1, m.getTitulo());
         ps.setString(2, m.getDuracao());
         ps.setString(3, m.getAno());
@@ -24,9 +21,9 @@ public class MusicasModel {
         ps.close(); con.close();
     }
 
-    static List<MusicasBean> listAll(Connection con) throws SQLException {
+    public static List<MusicasBean> listAll(Connection con) throws SQLException {
         Statement st = con.createStatement();
-        List<MusicasBean> lista = new ArrayList<MusicasBean>();        
+        List<MusicasBean> lista = new ArrayList<>();
         ResultSet result = st.executeQuery("SELECT * FROM musicas");
         while (result.next()) {
             lista.add(new MusicasBean(
@@ -42,15 +39,16 @@ public class MusicasModel {
         return lista;
     }
 
-    static void remove(int n, Connection con) throws SQLException {
+    public static void remove(int n, Connection con) throws SQLException {
         PreparedStatement st = con.prepareStatement("DELETE FROM musicas WHERE id_musica=?");
         st.setInt(1, n);
         st.executeUpdate();
         st.close(); con.close();
     }
 
-    static void alterar(MusicasBean m, Connection con) throws SQLException {
-        PreparedStatement st = con.prepareStatement("UPDATE musicas SET titulo=?, duracao=?, ano=?, id_genero=?, artista=? WHERE id_musica=?");
+    public static void alterar(MusicasBean m, Connection con) throws SQLException {
+        PreparedStatement st = con.prepareStatement(
+            "UPDATE musicas SET titulo=?, duracao=?, ano=?, id_genero=?, artista=? WHERE id_musica=?");
         st.setString(1, m.getTitulo());
         st.setString(2, m.getDuracao());
         st.setString(3, m.getAno());
@@ -60,5 +58,4 @@ public class MusicasModel {
         st.executeUpdate();
         st.close(); con.close();
     }
-
 }

@@ -1,5 +1,9 @@
 package com.udesc.gerenciador;
+
 import com.udesc.artistas.ArtistasFrame;
+import com.udesc.generos.GenerosFrame;
+import com.udesc.musicas.MusicasFrame;
+import com.udesc.playlists.PlaylistsFrame;
 import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -24,13 +28,12 @@ public class MenuInicial extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        jLabel3       = new javax.swing.JLabel();
+        jButton1      = new javax.swing.JButton();
+        jButton2      = new javax.swing.JButton();
+        jButton3      = new javax.swing.JButton();
+        jButton4      = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -41,70 +44,92 @@ public class MenuInicial extends javax.swing.JFrame {
         jDesktopPane1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 0, 161, 38));
 
         jButton1.setText("Playlists");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(e -> openPlaylists());
         jDesktopPane1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(355, 107, 167, 121));
 
         jButton2.setText("Artistas");
+        jButton2.addActionListener(e -> openArtistas());
         jDesktopPane1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 246, 167, 121));
 
         jButton3.setText("Gêneros");
+        jButton3.addActionListener(e -> openGeneros());
         jDesktopPane1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(355, 246, 167, 121));
 
         jButton4.setText("Músicas");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        jButton4.addActionListener(e -> openMusicas());
         jDesktopPane1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 107, 167, 121));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 623, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+        layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
-        );
+                .addContainerGap(51, Short.MAX_VALUE)));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void openArtistas() {
+        try {
+            this.setVisible(false);
+            ArtistasFrame frame = new ArtistasFrame();
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosed(java.awt.event.WindowEvent e) { setVisible(true); }
+            });
+            frame.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        this.hide();
-        ArtistasFrame artistasObj = null;
-       try {
-           artistasObj = new ArtistasFrame();
-       } catch (SQLException ex) {
-           Logger.getLogger(MenuInicial.class.getName()).log(Level.SEVERE, null, ex);
-       }
-        artistasObj.show();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void openGeneros() {
+        this.setVisible(false);
+        GenerosFrame frame = new GenerosFrame();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent e) { setVisible(true); }
+        });
+        frame.setVisible(true);
+    }
+
+    private void openMusicas() {
+        try {
+            this.setVisible(false);
+            MusicasFrame frame = new MusicasFrame();
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosed(java.awt.event.WindowEvent e) { setVisible(true); }
+            });
+            frame.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void openPlaylists() {
+        try {
+            this.setVisible(false);
+            PlaylistsFrame frame = new PlaylistsFrame();
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosed(java.awt.event.WindowEvent e) { setVisible(true); }
+            });
+            frame.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuInicial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
-        
-        
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
